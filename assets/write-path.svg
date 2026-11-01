@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="240" viewBox="0 0 1020 240" role="img" aria-label="Write path: Arrow batches are buffered into row groups, encoded in parallel, then sliced into parts that upload in the background, with the remainder and a checkpoint footer kept as trailing bytes in the state.">
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; }
+    .out { fill: #fff7ed; stroke: #fb923c; stroke-width: 1.5; }
+    .t { fill: #0f172a; font: 600 15px Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; text-anchor: middle; }
+    .s { fill: #475569; font: 12px Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; text-anchor: middle; }
+    .a { fill: none; stroke: #64748b; stroke-width: 1.8; }
+    .h { fill: #64748b; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #0f2a52; stroke: #3b82f6; }
+      .out { fill: #3a2210; stroke: #fb923c; }
+      .t { fill: #f0f6fc; }
+      .s { fill: #9fb0c3; }
+      .a { stroke: #8b98a9; }
+      .h { fill: #8b98a9; }
+    }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path class="h" d="M0 0 L10 5 L0 10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1020" height="240"/>
+
+  <rect class="box" x="10" y="90" width="120" height="60" rx="10"/>
+  <text class="t" x="70" y="115">Arrow batches</text>
+  <text class="s" x="70" y="134">write(batch)</text>
+
+  <rect class="box" x="160" y="90" width="130" height="60" rx="10"/>
+  <text class="t" x="225" y="115">Row group buffer</text>
+  <text class="s" x="225" y="134">row or byte limit</text>
+
+  <rect class="box" x="320" y="90" width="170" height="60" rx="10"/>
+  <text class="t" x="405" y="115">Parallel encode</text>
+  <text class="s" x="405" y="134">one rayon task per column</text>
+
+  <rect class="box" x="520" y="90" width="120" height="60" rx="10"/>
+  <text class="t" x="580" y="115">Encoded bytes</text>
+  <text class="s" x="580" y="134">sliced, no copy</text>
+
+  <rect class="box" x="690" y="24" width="170" height="60" rx="10"/>
+  <text class="t" x="775" y="49">Part uploads</text>
+  <text class="s" x="775" y="68">background, bounded</text>
+
+  <rect class="box" x="890" y="24" width="120" height="60" rx="10"/>
+  <text class="t" x="950" y="49">S3</text>
+  <text class="s" x="950" y="68">multipart upload</text>
+
+  <rect class="out" x="690" y="156" width="320" height="60" rx="10"/>
+  <text class="t" x="850" y="181">Trailing bytes in the state</text>
+  <text class="s" x="850" y="200">remainder + checkpoint footer</text>
+
+  <path class="a" d="M130 120 H158" marker-end="url(#ah)"/>
+  <path class="a" d="M290 120 H318" marker-end="url(#ah)"/>
+  <path class="a" d="M490 120 H518" marker-end="url(#ah)"/>
+  <path class="a" d="M640 110 C 665 110, 665 54, 688 54" marker-end="url(#ah)"/>
+  <path class="a" d="M640 130 C 665 130, 665 186, 688 186" marker-end="url(#ah)"/>
+  <path class="a" d="M860 54 H888" marker-end="url(#ah)"/>
+</svg>

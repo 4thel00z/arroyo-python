@@ -1,14 +1,36 @@
-# arroyo
+<h1 align="center">
+  <img src="https://raw.githubusercontent.com/4thel00z/arroyo-python/main/assets/logo.svg" alt="arroyo" height="96">
+</h1>
 
-**Crash-resumable Parquet streaming to S3 from Python.** One multipart upload per
-file, a checkpoint any process can finish, and parallel reads back. Rust core, PyO3
-bindings, Arrow in and out without copies.
+<p align="center">
+  <strong>Crash-resumable Parquet streaming to S3 from Python. One multipart upload per file, a checkpoint any process can finish, parallel reads back.</strong>
+</p>
 
-[![ci](https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml/badge.svg)](https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml)
-[![release](https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml/badge.svg)](https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml)
-[![PyPI](https://img.shields.io/pypi/v/arroyo-python)](https://pypi.org/project/arroyo-python/)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://pypi.org/project/arroyo-python/)
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-green)](#license)
+<p align="center">
+  <a href="https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml"><img src="https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml"><img src="https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml/badge.svg" alt="release"></a>
+  <a href="https://pypi.org/project/arroyo-python/"><img src="https://img.shields.io/pypi/v/arroyo-python?logo=pypi&logoColor=white" alt="PyPI"></a>
+  <img src="https://img.shields.io/badge/python-3.12%2B-blue?logo=python&logoColor=white" alt="Python 3.12+">
+  <img src="https://img.shields.io/badge/rust-2021-000000?logo=rust&logoColor=white" alt="Rust 2021">
+  <a href="#license"><img src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg" alt="MIT OR Apache-2.0"></a>
+</p>
+
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#quickstart">Quickstart</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#performance">Performance</a> ·
+  <a href="#api">API</a>
+</p>
+
+---
+
+## Highlights
+
+- **Resumes after a crash**: a checkpoint is a small blob; any process turns it into a valid Parquet file without re-uploading a byte.
+- **About 2× pyarrow on writes** (219 vs 116 MiB/s), with parallel reads ([benchmarks](#performance)).
+- **Rust core, Arrow in and out without copies**: PyO3 bindings, GIL released around every network call.
+- **No conditional writes needed**: works on S3-compatible stores that ignore `If-Match`.
 
 ```python
 writer = arroyo.ParquetStreamWriter(config, "events/2026-10-28.parquet", batch.schema)
@@ -48,15 +70,9 @@ and Windows. Building from source needs a Rust toolchain and maturin.
 
 ### Write path
 
-```mermaid
-flowchart LR
-    A[Arrow batches] --> B[Row group buffer]
-    B -->|row or byte limit reached| C[Column-parallel encode on rayon]
-    C --> D[Encoded bytes]
-    D -->|part_size slices, no copy| E[Background part uploads, bounded in flight]
-    E --> F[(S3 multipart upload)]
-    D -->|remainder + checkpoint footer| G[Trailing bytes in the state]
-```
+<img src="https://raw.githubusercontent.com/4thel00z/arroyo-python/main/assets/write-path.svg" alt="Write path: Arrow batches, row group buffer, parallel encode, encoded bytes, then part uploads to S3 and trailing bytes in the state">
+
+
 
 Batches are buffered until a row group is full. Every leaf column is then encoded on
 its own rayon task, the encoded bytes are sliced into fixed-size parts without
@@ -65,20 +81,9 @@ encoded. The GIL is released around every network call.
 
 ### Checkpoint and recovery
 
-```mermaid
-sequenceDiagram
-    participant W as Writer (process A)
-    participant S as S3
-    participant F as finish (process B)
-    W->>S: CreateMultipartUpload
-    W->>S: UploadPart 1..n (background, bounded)
-    W->>W: checkpoint(): close row group, wait for parts in flight, build footer
-    Note over W: state = upload id + parts + trailing bytes (unsent bytes + footer)
-    W--xW: process dies
-    F->>S: UploadPart n+1.. (trailing bytes)
-    F->>S: CompleteMultipartUpload(parts 1..n+1)
-    Note over F,S: on failure HEAD the object. The expected size means success
-```
+<img src="https://raw.githubusercontent.com/4thel00z/arroyo-python/main/assets/recovery.svg" alt="Checkpoint and recovery: the writer uploads parts and checkpoints a state; after the process dies, finish uploads the trailing bytes and completes the upload">
+
+
 
 `checkpoint()` returns a `WriterState`: the parts acknowledged so far and the
 *trailing bytes*, which are the bytes not yet uploaded plus a Parquet footer for
@@ -134,7 +139,7 @@ table = pa.RecordBatchReader.from_stream(reader).read_all()
 
 ## Performance
 
-![Write and read throughput of arroyo, pyarrow and obstore](benchmarks/results/throughput.svg)
+![Write and read throughput of arroyo, pyarrow and obstore](https://raw.githubusercontent.com/4thel00z/arroyo-python/main/benchmarks/results/throughput.svg)
 
 | | write MiB/s | read MiB/s |
 |---|---|---|
@@ -200,7 +205,8 @@ library at its defaults. Numbers are the mean of three runs; `make bench` and
 Memory for a read is about `concurrency` row groups' worth of compressed bytes plus
 a couple of decoded batches per row group.
 
-## Design notes
+<details>
+<summary><strong>Design notes</strong></summary>
 
 **Footer without a fork.** Arroyo patches `parquet` to write a footer without closing
 the writer. arroyo builds the same footer from upstream
@@ -221,6 +227,8 @@ lists with gaps.
 
 **Versions.** `pyo3-arrow` 0.20 pins `arrow` 59, so the crate uses `parquet` 59 and
 `object_store` 0.13, one version of each.
+
+</details>
 
 ## Development
 
