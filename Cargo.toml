@@ -3,13 +3,13 @@ resolver = "2"
 members = ["crates/arroyo-core", "crates/arroyo-py"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.0" # x-release-please-version
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/4thel00z/arroyo-python"
 
 [workspace.dependencies]
-arroyo-core = { path = "crates/arroyo-core", version = "0.1.0" }
+arroyo-core = { path = "crates/arroyo-core", version = "0.1.0" } # x-release-please-version
 arrow-array = "59"
 arrow-schema = "59"
 parquet = { version = "59", features = ["async"] }
