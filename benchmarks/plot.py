@@ -1,7 +1,7 @@
 """Renders the JSON written by bench_throughput.py --json as a standalone SVG bar chart.
 
-The SVG carries its own light and dark styles, so it renders in a README in both
-GitHub themes. Repeated cases are averaged.
+The SVG has a white background, so it looks the same in every README theme.
+Repeated cases are averaged.
 
     python benchmarks/plot.py results.json benchmarks/results/throughput.svg
 """
@@ -16,7 +16,6 @@ LIBRARIES = ("arroyo", "pyarrow", "obstore")
 PHASES = ("write", "read")
 
 LIGHT = {"arroyo": "#2a78d6", "pyarrow": "#eb6834", "obstore": "#1baf7a"}
-DARK = {"arroyo": "#3987e5", "pyarrow": "#d95926", "obstore": "#199e70"}
 
 WIDTH = 760
 BAR = 18
@@ -84,15 +83,10 @@ def render(report: dict) -> str:
         f'Segoe UI, Helvetica, Arial, sans-serif" font-size="12">'
     )
     series_light = "".join(f".s-{lib}{{fill:{LIGHT[lib]}}}" for lib in libraries)
-    series_dark = "".join(f".s-{lib}{{fill:{DARK[lib]}}}" for lib in libraries)
     lines.append(
         "<style>"
         ".surface{fill:#ffffff}.ink{fill:#1f2328}.muted{fill:#59636e}.grid{stroke:#d1d9e0;stroke-width:1}"
         f"{series_light}"
-        "@media (prefers-color-scheme: dark){"
-        ".surface{fill:#0d1117}.ink{fill:#f0f6fc}.muted{fill:#9198a1}.grid{stroke:#3d444d}"
-        f"{series_dark}"
-        "}"
         "</style>"
     )
     lines.append(f'<rect class="surface" width="{WIDTH}" height="{height}" rx="8"/>')

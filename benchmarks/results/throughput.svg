@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="262" viewBox="0 0 760 262" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12">
-<style>.surface{fill:#ffffff}.ink{fill:#1f2328}.muted{fill:#59636e}.grid{stroke:#d1d9e0;stroke-width:1}.s-arroyo{fill:#2a78d6}.s-pyarrow{fill:#eb6834}.s-obstore{fill:#1baf7a}@media (prefers-color-scheme: dark){.surface{fill:#0d1117}.ink{fill:#f0f6fc}.muted{fill:#9198a1}.grid{stroke:#3d444d}.s-arroyo{fill:#3987e5}.s-pyarrow{fill:#d95926}.s-obstore{fill:#199e70}}</style>
+<style>.surface{fill:#ffffff}.ink{fill:#1f2328}.muted{fill:#59636e}.grid{stroke:#d1d9e0;stroke-width:1}.s-arroyo{fill:#2a78d6}.s-pyarrow{fill:#eb6834}.s-obstore{fill:#1baf7a}</style>
 <rect class="surface" width="760" height="262" rx="8"/>
 <text class="ink" x="70" y="24" font-size="15" font-weight="600">Throughput, MiB/s of Arrow data (higher is better)</text>
 <text class="muted" x="70" y="42">20,000,000 rows, 801 MiB per file, 12 cpus, macOS-27.0.1-arm64-arm-64bit, pyarrow 26.0.0, arroyo 0.1.0</text>
@@ -27,8 +27,8 @@
 <text class="ink" x="652.4" y="201.0" font-variant-numeric="tabular-nums">287</text>
 <rect class="s-arroyo" x="70" y="239" width="12" height="12" rx="2"/>
 <text class="ink" x="88" y="249">arroyo</text>
-<rect class="s-pyarrow" x="156" y="239" width="12" height="12" rx="2"/>
-<text class="ink" x="174" y="249">pyarrow</text>
-<rect class="s-obstore" x="258" y="239" width="12" height="12" rx="2"/>
-<text class="ink" x="276" y="249">obstore</text>
+<rect class="s-pyarrow" x="164" y="239" width="12" height="12" rx="2"/>
+<text class="ink" x="182" y="249">pyarrow</text>
+<rect class="s-obstore" x="266" y="239" width="12" height="12" rx="2"/>
+<text class="ink" x="284" y="249">obstore</text>
 </svg>
