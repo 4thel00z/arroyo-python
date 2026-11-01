@@ -1,21 +1,21 @@
-# aroyo
+# arroyo
 
 **Crash-resumable Parquet streaming to S3 from Python.** One multipart upload per
 file, a checkpoint any process can finish, and parallel reads back. Rust core, PyO3
 bindings, Arrow in and out without copies.
 
-[![ci](https://github.com/4thel00z/aroyo-python/actions/workflows/ci.yml/badge.svg)](https://github.com/4thel00z/aroyo-python/actions/workflows/ci.yml)
-[![release](https://github.com/4thel00z/aroyo-python/actions/workflows/release.yml/badge.svg)](https://github.com/4thel00z/aroyo-python/actions/workflows/release.yml)
-[![PyPI](https://img.shields.io/pypi/v/aroyo)](https://pypi.org/project/aroyo/)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://pypi.org/project/aroyo/)
+[![ci](https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml/badge.svg)](https://github.com/4thel00z/arroyo-python/actions/workflows/ci.yml)
+[![release](https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml/badge.svg)](https://github.com/4thel00z/arroyo-python/actions/workflows/release.yml)
+[![PyPI](https://img.shields.io/pypi/v/arroyo-python)](https://pypi.org/project/arroyo-python/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://pypi.org/project/arroyo-python/)
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-green)](#license)
 
 ```python
-writer = aroyo.ParquetStreamWriter(config, "events/2026-10-28.parquet", batch.schema)
+writer = arroyo.ParquetStreamWriter(config, "events/2026-10-28.parquet", batch.schema)
 writer.write(batch)
 state = writer.checkpoint()        # small, serializable, survives the process
 ...                                # the process dies here
-aroyo.finish(config, state)        # any other process: a valid Parquet file, no re-upload
+arroyo.finish(config, state)        # any other process: a valid Parquet file, no re-upload
 ```
 
 ## Why
@@ -23,7 +23,7 @@ aroyo.finish(config, state)        # any other process: a valid Parquet file, no
 S3 objects cannot be appended to, and a streaming job that writes one file across
 many checkpoints has to keep a multipart upload open. Existing Python writers
 (pyarrow's `S3FileSystem`, obstore) stream a multipart upload but cannot resume one:
-when the process dies, the file is gone. aroyo implements the method from Arroyo's
+when the process dies, the file is gone. arroyo implements the method from Arroyo's
 filesystem sink ([Streaming to S3 is hard](https://www.arroyo.dev/blog/streaming-to-s3-is-hard/))
 so that a checkpoint carries enough to complete the file later, from anywhere, with
 nothing already uploaded sent again. It needs no conditional writes, so it works on
@@ -33,12 +33,12 @@ S3-compatible stores that accept and ignore `If-Match`.
 |---|---|---|---|
 | pyarrow `S3FileSystem` | yes | no | no |
 | obstore | yes | no | partially |
-| **aroyo** | **yes** | **yes** | **yes** |
+| **arroyo** | **yes** | **yes** | **yes** |
 
 ## Install
 
 ```sh
-pip install aroyo
+pip install arroyo-python
 ```
 
 Python 3.12 or newer. Wheels ship for Linux (x86_64, aarch64), macOS (arm64, x86_64)
@@ -101,11 +101,11 @@ file order.
 
 ```python
 import pyarrow as pa
-import aroyo
+import arroyo
 
-config = aroyo.S3Config.from_env(bucket="events")   # AWS_ENDPOINT, AWS_ACCESS_KEY_ID, ...
+config = arroyo.S3Config.from_env(bucket="events")   # AWS_ENDPOINT, AWS_ACCESS_KEY_ID, ...
 
-writer = aroyo.ParquetStreamWriter(
+writer = arroyo.ParquetStreamWriter(
     config,
     "events/part-0001.parquet",
     schema,                            # anything with __arrow_c_schema__
@@ -124,9 +124,9 @@ record(pending.to_bytes())             # your durable checkpoint
 pending.commit()                       # completes the multipart upload
 
 # Another process, after a crash, from the last recorded blob:
-aroyo.finish(config, aroyo.WriterState.from_bytes(blob))
+arroyo.finish(config, arroyo.WriterState.from_bytes(blob))
 
-reader = aroyo.read_parquet(config, "events/part-0001.parquet", columns=["a", "b"], concurrency=8)
+reader = arroyo.read_parquet(config, "events/part-0001.parquet", columns=["a", "b"], concurrency=8)
 table = pa.RecordBatchReader.from_stream(reader).read_all()
 ```
 
@@ -134,15 +134,15 @@ table = pa.RecordBatchReader.from_stream(reader).read_all()
 
 ## Performance
 
-![Write and read throughput of aroyo, pyarrow and obstore](benchmarks/results/throughput.svg)
+![Write and read throughput of arroyo, pyarrow and obstore](benchmarks/results/throughput.svg)
 
 | | write MiB/s | read MiB/s |
 |---|---|---|
-| **aroyo** | 219 | 261 |
+| **arroyo** | 219 | 261 |
 | pyarrow | 116 | 166 |
 | obstore | 134 | 287 |
 
-Apple M3 Pro, 12 cores, 20,000,000 rows (801 MiB of Arrow data) per file, pyarrow 26.0.0, obstore 0.12.1, aroyo 0.1.0. aroyo reads with `concurrency=8`; the obstore baseline reads through pyarrow's own multithreaded decoder.
+Apple M3 Pro, 12 cores, 20,000,000 rows (801 MiB of Arrow data) per file, pyarrow 26.0.0, obstore 0.12.1, arroyo 0.1.0. arroyo reads with `concurrency=8`; the obstore baseline reads through pyarrow's own multithreaded decoder.
 
 The benchmark writes and reads one Parquet file of synthetic int64, float64 and
 string columns against a local S3-compatible server (RustFS in Docker) with every
@@ -154,9 +154,9 @@ library at its defaults. Numbers are the mean of three runs; `make bench` and
 - **One writer per state.** There is no compare-and-set. Stop the old writer before
   `finish(state)` runs in a new process. A writer that is still running can complete
   the upload with a different part list; one of the two wins and the other fails the
-  size check with `AroyoError`.
+  size check with `ArroyoError`.
 - **Abandoned uploads cost storage.** Configure an `AbortIncompleteMultipartUpload`
-  lifecycle rule on the bucket, and call `aroyo.abort(config, state)` or
+  lifecycle rule on the bucket, and call `arroyo.abort(config, state)` or
   `writer.abort()` for uploads you give up on. The writer aborts its upload when a
   `with` block exits with an exception. A writer that is dropped without `close()` or
   `abort()` leaves its upload in place, so a recorded checkpoint stays finishable.
@@ -177,7 +177,7 @@ library at its defaults. Numbers are the mean of three runs; `make bench` and
 | `finish(config, state)` | uploads the trailing bytes and completes the upload; idempotent |
 | `abort(config, state)` | aborts the upload |
 | `read_parquet(config, path, *, columns, concurrency, batch_size)` | returns an Arrow C stream (`pa.RecordBatchReader.from_stream(...)`) |
-| `AroyoError` | every storage or format failure; bad arguments raise `ValueError` |
+| `ArroyoError` | every storage or format failure; bad arguments raise `ValueError` |
 
 ### Writer options
 
@@ -203,7 +203,7 @@ a couple of decoded batches per row group.
 ## Design notes
 
 **Footer without a fork.** Arroyo patches `parquet` to write a footer without closing
-the writer. aroyo builds the same footer from upstream
+the writer. arroyo builds the same footer from upstream
 `SerializedFileWriter::flushed_row_groups()` with `ParquetMetaDataWriter`. Column
 chunk offsets in row-group metadata are absolute file offsets, so the footer is valid
 at the current `bytes_written()`. The upstream writer assigns page-index offsets only
@@ -233,9 +233,9 @@ make test-py     # pytest against an in-process moto S3
 make s3          # RustFS in Docker on 127.0.0.1:9000 (rustfsadmin / rustfsadmin)
 ```
 
-Set `AROYO_TEST_ENDPOINT`, `AROYO_TEST_BUCKET` and the `AWS_*` variables to run
+Set `ARROYO_TEST_ENDPOINT`, `ARROYO_TEST_BUCKET` and the `AWS_*` variables to run
 pytest against RustFS or any other store instead of moto. The benchmark takes
-`AROYO_BENCH_ENDPOINT` and `AROYO_BENCH_BUCKET`:
+`ARROYO_BENCH_ENDPOINT` and `ARROYO_BENCH_BUCKET`:
 
 ```sh
 python benchmarks/bench_throughput.py --rows 20000000 --repeat 3 --json results.json

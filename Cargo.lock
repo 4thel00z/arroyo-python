@@ -41,41 +41,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aroyo-core"
-version = "0.1.0"
-dependencies = [
- "arrow-array",
- "arrow-schema",
- "arrow-select",
- "async-trait",
- "bytes",
- "futures",
- "object_store",
- "parquet",
- "postcard",
- "rayon",
- "serde",
- "serde_bytes",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "aroyo-py"
-version = "0.1.0"
-dependencies = [
- "aroyo-core",
- "arrow-array",
- "arrow-schema",
- "futures",
- "object_store",
- "parquet",
- "pyo3",
- "pyo3-arrow",
- "tokio",
-]
-
-[[package]]
 name = "arrow-array"
 version = "59.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -190,6 +155,41 @@ dependencies = [
  "arrow-data",
  "arrow-schema",
  "num-traits",
+]
+
+[[package]]
+name = "arroyo-core"
+version = "0.1.0"
+dependencies = [
+ "arrow-array",
+ "arrow-schema",
+ "arrow-select",
+ "async-trait",
+ "bytes",
+ "futures",
+ "object_store",
+ "parquet",
+ "postcard",
+ "rayon",
+ "serde",
+ "serde_bytes",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "arroyo-py"
+version = "0.1.0"
+dependencies = [
+ "arrow-array",
+ "arrow-schema",
+ "arroyo-core",
+ "futures",
+ "object_store",
+ "parquet",
+ "pyo3",
+ "pyo3-arrow",
+ "tokio",
 ]
 
 [[package]]

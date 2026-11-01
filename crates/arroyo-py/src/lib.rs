@@ -1,4 +1,4 @@
-//! Python bindings for aroyo, compiled as the extension module `aroyo._aroyo`.
+//! Python bindings for arroyo, compiled as the extension module `arroyo._arroyo`.
 //!
 //! Every call that touches the network releases the GIL and runs on one shared
 //! tokio runtime. Core errors map to Python exceptions in [`to_py`] only.
@@ -17,12 +17,12 @@ use pyo3_arrow::input::AnyRecordBatch;
 use pyo3_arrow::{PyRecordBatchReader, PySchema};
 use tokio::runtime::{Builder, Handle, Runtime};
 
-use aroyo_core::upload::UploadLimits;
-use aroyo_core::{ParquetStream, ParquetStreamWriter as CoreWriter, ReadOptions, WriterOptions};
+use arroyo_core::upload::UploadLimits;
+use arroyo_core::{ParquetStream, ParquetStreamWriter as CoreWriter, ReadOptions, WriterOptions};
 
 create_exception!(
-    aroyo,
-    AroyoError,
+    arroyo,
+    ArroyoError,
     PyException,
     "Raised for any storage, Parquet or checkpoint-state error."
 );
@@ -35,17 +35,17 @@ fn runtime() -> PyResult<&'static Runtime> {
     }
     let built = Builder::new_multi_thread()
         .enable_all()
-        .thread_name("aroyo-io")
+        .thread_name("arroyo-io")
         .build()
-        .map_err(|e| AroyoError::new_err(format!("tokio runtime: {e}")))?;
+        .map_err(|e| ArroyoError::new_err(format!("tokio runtime: {e}")))?;
     Ok(RUNTIME.get_or_init(|| built))
 }
 
 /// Maps every core error to a Python exception.
-fn to_py(err: aroyo_core::Error) -> PyErr {
+fn to_py(err: arroyo_core::Error) -> PyErr {
     match err {
-        aroyo_core::Error::InvalidArgument(message) => PyValueError::new_err(message),
-        other => AroyoError::new_err(other.to_string()),
+        arroyo_core::Error::InvalidArgument(message) => PyValueError::new_err(message),
+        other => ArroyoError::new_err(other.to_string()),
     }
 }
 
@@ -68,10 +68,10 @@ fn parse_compression(name: &str) -> PyResult<parquet::basic::Compression> {
 }
 
 /// Connection settings for one S3-compatible endpoint.
-#[pyclass(frozen, module = "aroyo")]
+#[pyclass(frozen, module = "arroyo")]
 #[derive(Clone)]
 struct S3Config {
-    inner: aroyo_core::S3Config,
+    inner: arroyo_core::S3Config,
 }
 
 impl S3Config {
@@ -92,7 +92,7 @@ impl S3Config {
         virtual_hosted_style: Option<bool>,
     ) -> Self {
         Self {
-            inner: aroyo_core::S3Config {
+            inner: arroyo_core::S3Config {
                 read_env,
                 bucket,
                 region,
@@ -205,10 +205,10 @@ impl S3Config {
 }
 
 /// Checkpoint state of one upload; see `WriterState.to_bytes`.
-#[pyclass(frozen, module = "aroyo")]
+#[pyclass(frozen, module = "arroyo")]
 #[derive(Clone)]
 struct WriterState {
-    inner: aroyo_core::WriterState,
+    inner: arroyo_core::WriterState,
 }
 
 #[pymethods]
@@ -273,7 +273,7 @@ impl WriterState {
 
     #[staticmethod]
     fn from_bytes(data: &Bound<'_, PyBytes>) -> PyResult<Self> {
-        let inner = aroyo_core::WriterState::from_bytes(data.as_bytes()).map_err(to_py)?;
+        let inner = arroyo_core::WriterState::from_bytes(data.as_bytes()).map_err(to_py)?;
         Ok(Self { inner })
     }
 
@@ -295,9 +295,9 @@ impl WriterState {
 }
 
 /// A closed file whose upload still has to be completed.
-#[pyclass(frozen, module = "aroyo")]
+#[pyclass(frozen, module = "arroyo")]
 struct PendingCommit {
-    state: aroyo_core::WriterState,
+    state: arroyo_core::WriterState,
     store: Arc<AmazonS3>,
 }
 
@@ -309,7 +309,7 @@ impl PendingCommit {
         let store = Arc::clone(&self.store);
         let state = self.state.clone();
         py.detach(|| {
-            runtime.block_on(aroyo_core::finish(
+            runtime.block_on(arroyo_core::finish(
                 store.as_ref(),
                 &state,
                 &UploadLimits::S3,
@@ -357,7 +357,7 @@ impl PendingCommit {
 }
 
 /// Streams record batches into one Parquet multipart upload.
-#[pyclass(module = "aroyo")]
+#[pyclass(module = "arroyo")]
 struct ParquetStreamWriter {
     inner: Mutex<Option<CoreWriter<AmazonS3>>>,
     store: Arc<AmazonS3>,
@@ -366,12 +366,12 @@ struct ParquetStreamWriter {
 impl ParquetStreamWriter {
     fn with_writer<T>(
         &self,
-        f: impl FnOnce(&mut CoreWriter<AmazonS3>) -> aroyo_core::Result<T>,
+        f: impl FnOnce(&mut CoreWriter<AmazonS3>) -> arroyo_core::Result<T>,
     ) -> PyResult<T> {
         let mut guard = self.inner.lock().unwrap_or_else(PoisonError::into_inner);
         let writer = guard
             .as_mut()
-            .ok_or_else(|| AroyoError::new_err("writer is closed"))?;
+            .ok_or_else(|| ArroyoError::new_err("writer is closed"))?;
         f(writer).map_err(to_py)
     }
 
@@ -379,7 +379,7 @@ impl ParquetStreamWriter {
         let mut guard = self.inner.lock().unwrap_or_else(PoisonError::into_inner);
         guard
             .take()
-            .ok_or_else(|| AroyoError::new_err("writer is closed"))
+            .ok_or_else(|| ArroyoError::new_err("writer is closed"))
     }
 }
 
@@ -545,7 +545,7 @@ fn finish(py: Python<'_>, config: &S3Config, state: &WriterState) -> PyResult<()
     let runtime = runtime()?;
     let state = state.inner.clone();
     py.detach(|| {
-        runtime.block_on(aroyo_core::finish(
+        runtime.block_on(arroyo_core::finish(
             store.as_ref(),
             &state,
             &UploadLimits::S3,
@@ -560,7 +560,7 @@ fn abort(py: Python<'_>, config: &S3Config, state: &WriterState) -> PyResult<()>
     let store = config.store()?;
     let runtime = runtime()?;
     let state = state.inner.clone();
-    py.detach(|| runtime.block_on(aroyo_core::abort(store.as_ref(), &state)))
+    py.detach(|| runtime.block_on(arroyo_core::abort(store.as_ref(), &state)))
         .map_err(to_py)
 }
 
@@ -609,7 +609,7 @@ fn read_parquet(
     };
     let handle = runtime.handle().clone();
     let stream = py
-        .detach(|| runtime.block_on(aroyo_core::open(store, &path, options, handle)))
+        .detach(|| runtime.block_on(arroyo_core::open(store, &path, options, handle)))
         .map_err(to_py)?;
     let reader = BlockingBatchReader {
         handle: runtime.handle().clone(),
@@ -619,9 +619,9 @@ fn read_parquet(
 }
 
 #[pymodule]
-fn _aroyo(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn _arroyo(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
-    m.add("AroyoError", m.py().get_type::<AroyoError>())?;
+    m.add("ArroyoError", m.py().get_type::<ArroyoError>())?;
     m.add_class::<S3Config>()?;
     m.add_class::<WriterState>()?;
     m.add_class::<PendingCommit>()?;

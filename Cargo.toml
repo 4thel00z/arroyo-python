@@ -1,15 +1,15 @@
 [workspace]
 resolver = "2"
-members = ["crates/aroyo-core", "crates/aroyo-py"]
+members = ["crates/arroyo-core", "crates/arroyo-py"]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/4thel00z/aroyo-python"
+repository = "https://github.com/4thel00z/arroyo-python"
 
 [workspace.dependencies]
-aroyo-core = { path = "crates/aroyo-core", version = "0.1.0" }
+arroyo-core = { path = "crates/arroyo-core", version = "0.1.0" }
 arrow-array = "59"
 arrow-schema = "59"
 parquet = { version = "59", features = ["async"] }

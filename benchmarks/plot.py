@@ -12,11 +12,11 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 
-LIBRARIES = ("aroyo", "pyarrow", "obstore")
+LIBRARIES = ("arroyo", "pyarrow", "obstore")
 PHASES = ("write", "read")
 
-LIGHT = {"aroyo": "#2a78d6", "pyarrow": "#eb6834", "obstore": "#1baf7a"}
-DARK = {"aroyo": "#3987e5", "pyarrow": "#d95926", "obstore": "#199e70"}
+LIGHT = {"arroyo": "#2a78d6", "pyarrow": "#eb6834", "obstore": "#1baf7a"}
+DARK = {"arroyo": "#3987e5", "pyarrow": "#d95926", "obstore": "#199e70"}
 
 WIDTH = 760
 BAR = 18
@@ -102,7 +102,7 @@ def render(report: dict) -> str:
     )
     lines.append(
         f'<text class="muted" x="{LEFT}" y="42">{report["rows"]:,} rows, {payload_mib:,.0f} MiB per file, '
-        f'{report["cpus"]} cpus, {report["machine"]}, pyarrow {report["pyarrow"]}, aroyo {report["aroyo"]}</text>'
+        f'{report["cpus"]} cpus, {report["machine"]}, pyarrow {report["pyarrow"]}, arroyo {report["arroyo"]}</text>'
     )
 
     tick = 0.0

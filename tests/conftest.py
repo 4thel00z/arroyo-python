@@ -1,4 +1,4 @@
-"""Fixtures: an S3 endpoint (moto in-process, or AROYO_TEST_ENDPOINT) and test data."""
+"""Fixtures: an S3 endpoint (moto in-process, or ARROYO_TEST_ENDPOINT) and test data."""
 
 import os
 import socket
@@ -10,7 +10,7 @@ from collections.abc import Iterator
 import pyarrow as pa
 import pytest
 
-import aroyo
+import arroyo
 
 MIB = 1024 * 1024
 PART_SIZE = 5 * MIB
@@ -33,7 +33,7 @@ def create_bucket(endpoint: str, bucket: str) -> None:
 
 @pytest.fixture(scope="session")
 def endpoint() -> Iterator[str]:
-    external = os.environ.get("AROYO_TEST_ENDPOINT")
+    external = os.environ.get("ARROYO_TEST_ENDPOINT")
     if external:
         yield external
         return
@@ -47,11 +47,11 @@ def endpoint() -> Iterator[str]:
 
 
 @pytest.fixture(scope="session")
-def config(endpoint: str) -> aroyo.S3Config:
-    bucket = os.environ.get("AROYO_TEST_BUCKET", "aroyo-test")
-    if not os.environ.get("AROYO_TEST_ENDPOINT"):
+def config(endpoint: str) -> arroyo.S3Config:
+    bucket = os.environ.get("ARROYO_TEST_BUCKET", "arroyo-test")
+    if not os.environ.get("ARROYO_TEST_ENDPOINT"):
         create_bucket(endpoint, bucket)
-    return aroyo.S3Config(
+    return arroyo.S3Config(
         endpoint=endpoint,
         bucket=bucket,
         region=os.environ.get("AWS_REGION", "us-east-1"),

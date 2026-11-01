@@ -54,8 +54,8 @@ jobs:
           --health-cmd "curl -f http://localhost:9000/health"
           --health-interval 5s --health-timeout 5s --health-retries 20
     env:
-      AROYO_TEST_ENDPOINT: http://127.0.0.1:9000
-      AROYO_TEST_BUCKET: aroyo-ci
+      ARROYO_TEST_ENDPOINT: http://127.0.0.1:9000
+      ARROYO_TEST_BUCKET: arroyo-ci
       AWS_ACCESS_KEY_ID: rustfsadmin
       AWS_SECRET_ACCESS_KEY: rustfsadmin
       AWS_REGION: us-east-1
@@ -67,6 +67,6 @@ jobs:
         with:
           python-version: "3.12"
       - name: Create the bucket
-        run: aws --endpoint-url http://127.0.0.1:9000 s3 mb s3://aroyo-ci
+        run: aws --endpoint-url http://127.0.0.1:9000 s3 mb s3://arroyo-ci
       - run: pip install . pytest pyarrow
       - run: pytest -q

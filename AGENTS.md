@@ -4,7 +4,7 @@ Read `HANDOFF.md` first. It holds the goal, the sources and the open decisions.
 
 ## Repository
 
-- Public repo: `github.com/4thel00z/aroyo-python`. Remote `origin` uses the SSH host alias
+- Public repo: `github.com/4thel00z/arroyo-python`. Remote `origin` uses the SSH host alias
   `4thel00z.github.com`.
 - Commit as `4thel00z <4thel00z@gmail.com>`, GPG-signed. Conventional commit titles
   (`feat(writer): ...`); the body is a few sentences plus verification evidence.
@@ -19,7 +19,7 @@ Read `HANDOFF.md` first. It holds the goal, the sources and the open decisions.
   `panic`, `unreachable`, `todo`, `unimplemented`). Allow them in tests via
   `clippy.toml` (`allow-unwrap-in-tests`, `allow-expect-in-tests`). Never use `#[allow]`
   to silence them. A panic across PyO3 becomes an exception that hides the real error.
-- Errors map to Python exceptions in one place in `aroyo-py`.
+- Errors map to Python exceptions in one place in `arroyo-py`.
 
 ## Python
 

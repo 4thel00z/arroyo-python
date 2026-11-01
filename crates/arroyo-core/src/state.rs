@@ -58,7 +58,7 @@ impl WriterState {
         let header_len = MAGIC.len() + 1;
         if bytes.len() < header_len || &bytes[..MAGIC.len()] != MAGIC {
             return Err(Error::StateEncoding(
-                "not an aroyo writer state".to_string(),
+                "not an arroyo writer state".to_string(),
             ));
         }
         let version = bytes[MAGIC.len()];

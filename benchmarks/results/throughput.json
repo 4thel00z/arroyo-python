@@ -3,18 +3,18 @@
   "cpus": 12,
   "python": "3.12.10",
   "pyarrow": "26.0.0",
-  "aroyo": "0.1.0",
+  "arroyo": "0.1.0",
   "rows": 20000000,
   "payload_bytes": 840000000,
   "results": [
     {
-      "name": "aroyo write",
+      "name": "arroyo write",
       "seconds": 3.968335459008813,
       "payload_bytes": 840000000,
       "mib_per_second": 201.86963376864833
     },
     {
-      "name": "aroyo read (concurrency=8)",
+      "name": "arroyo read (concurrency=8)",
       "seconds": 2.768810790963471,
       "payload_bytes": 840000000,
       "mib_per_second": 289.3250880109773
@@ -44,13 +44,13 @@
       "mib_per_second": 300.64974738961945
     },
     {
-      "name": "aroyo write",
+      "name": "arroyo write",
       "seconds": 4.075836041010916,
       "payload_bytes": 840000000,
       "mib_per_second": 196.54530204864648
     },
     {
-      "name": "aroyo read (concurrency=8)",
+      "name": "arroyo read (concurrency=8)",
       "seconds": 3.3026443750131875,
       "payload_bytes": 840000000,
       "mib_per_second": 242.55909350762334
@@ -80,13 +80,13 @@
       "mib_per_second": 245.8464245711264
     },
     {
-      "name": "aroyo write",
+      "name": "arroyo write",
       "seconds": 3.0826672499533743,
       "payload_bytes": 840000000,
       "mib_per_second": 259.86795227197047
     },
     {
-      "name": "aroyo read (concurrency=8)",
+      "name": "arroyo read (concurrency=8)",
       "seconds": 3.202629500068724,
       "payload_bytes": 840000000,
       "mib_per_second": 250.1339682795215

@@ -21,7 +21,7 @@ use tokio::runtime::Handle;
 mod support;
 use support::MemoryStore;
 
-use aroyo_core::{
+use arroyo_core::{
     finish, open, Error, ParquetStreamWriter, ReadOptions, UploadLimits, WriterOptions, WriterState,
 };
 
@@ -192,7 +192,7 @@ async fn checkpoint_footer_makes_a_valid_file_up_to_the_checkpoint() {
         .map(|kv| kv.key.as_str())
         .collect();
     assert!(keys.contains(&ARROW_SCHEMA_META_KEY));
-    assert!(file_meta.created_by().unwrap().starts_with("aroyo version"));
+    assert!(file_meta.created_by().unwrap().starts_with("arroyo version"));
     assert_eq!(builder.schema().as_ref(), schema().as_ref());
 
     assert_eq!(read_all(bytes), expected(&batches, 3500));

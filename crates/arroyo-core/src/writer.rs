@@ -86,7 +86,7 @@ impl<S: Store> ParquetStreamWriter<S> {
         let props = WriterProperties::builder()
             .set_compression(options.compression)
             .set_max_row_group_row_count(Some(options.max_row_group_rows))
-            .set_created_by(format!("aroyo version {}", env!("CARGO_PKG_VERSION")))
+            .set_created_by(format!("arroyo version {}", env!("CARGO_PKG_VERSION")))
             .build();
         let arrow_writer = ArrowWriter::try_new_with_options(
             BytesMut::new().writer(),

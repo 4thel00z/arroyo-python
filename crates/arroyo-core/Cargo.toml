@@ -1,5 +1,5 @@
 [package]
-name = "aroyo-core"
+name = "arroyo-core"
 description = "Crash-resumable Parquet multipart uploads to S3-compatible storage, and parallel reads back"
 version.workspace = true
 edition.workspace = true

@@ -32,7 +32,7 @@ develop: ## Build the extension into the active venv
 	maturin develop
 
 .PHONY: test-py
-test-py: ## Run pytest against an in-process moto S3 (or AROYO_TEST_ENDPOINT)
+test-py: ## Run pytest against an in-process moto S3 (or ARROYO_TEST_ENDPOINT)
 	pytest -q
 
 .PHONY: s3
@@ -40,7 +40,7 @@ s3: ## Run a local S3-compatible server (RustFS) for integration tests and bench
 	docker run --rm -p 127.0.0.1:9000:9000 -e RUSTFS_ACCESS_KEY=rustfsadmin -e RUSTFS_SECRET_KEY=rustfsadmin rustfs/rustfs:latest
 
 .PHONY: bench
-bench: ## Throughput benchmark; needs AROYO_BENCH_ENDPOINT and AROYO_BENCH_BUCKET
+bench: ## Throughput benchmark; needs ARROYO_BENCH_ENDPOINT and ARROYO_BENCH_BUCKET
 	python benchmarks/bench_throughput.py
 
 .PHONY: help

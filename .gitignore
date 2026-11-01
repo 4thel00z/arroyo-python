@@ -6,5 +6,5 @@ __pycache__/
 *.so
 *.egg-info/
 .pytest_cache/
-/python/aroyo/_aroyo.*.so
+/python/arroyo/_arroyo.*.so
 /.claude/settings.local.json

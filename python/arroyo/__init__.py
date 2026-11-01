@@ -1,7 +1,7 @@
 """Crash-resumable Parquet multipart uploads to S3-compatible storage, and parallel reads back."""
 
-from aroyo._aroyo import (
-    AroyoError,
+from arroyo._arroyo import (
+    ArroyoError,
     ParquetStreamWriter,
     PendingCommit,
     S3Config,
@@ -13,7 +13,7 @@ from aroyo._aroyo import (
 )
 
 __all__ = [
-    "AroyoError",
+    "ArroyoError",
     "ParquetStreamWriter",
     "PendingCommit",
     "S3Config",

@@ -1,4 +1,4 @@
-# Handoff: aroyo-python
+# Handoff: arroyo-python
 
 Python bindings (Rust + PyO3) for streaming Arrow data to S3 and back, using the
 crash-resumable multipart-upload method that Arroyo's filesystem sink uses.
@@ -143,7 +143,7 @@ can consume.
 ## 5. Proposed Python API (draft)
 
 ```python
-from aroyo import S3Config, ParquetStreamWriter, PendingCommit, WriterState, read_parquet
+from arroyo import S3Config, ParquetStreamWriter, PendingCommit, WriterState, read_parquet
 
 config = S3Config.from_env()  # AWS_ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, AWS_ALLOW_HTTP
 
@@ -191,11 +191,11 @@ Follow `4thel00z/pdfboss` (maturin + PyO3):
 
 ```
 Cargo.toml                      # workspace
-crates/aroyo-core/              # Rust: writer, state, reader (no PyO3)
-crates/aroyo-py/                # PyO3 module, thin
-python/aroyo/__init__.py        # re-exports, type stubs (.pyi)
+crates/arroyo-core/              # Rust: writer, state, reader (no PyO3)
+crates/arroyo-py/                # PyO3 module, thin
+python/arroyo/__init__.py        # re-exports, type stubs (.pyi)
 tests/                          # pytest
-pyproject.toml                  # maturin: python-source = "python", module-name = "aroyo._aroyo"
+pyproject.toml                  # maturin: python-source = "python", module-name = "arroyo._arroyo"
 ```
 
 Current versions (crates.io / PyPI, 2026-10-27): `pyo3` 0.30.1,

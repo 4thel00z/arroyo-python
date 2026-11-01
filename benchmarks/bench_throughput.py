@@ -1,6 +1,6 @@
-"""Write and read throughput of aroyo against pyarrow's S3FileSystem and obstore.
+"""Write and read throughput of arroyo against pyarrow's S3FileSystem and obstore.
 
-Environment: AROYO_BENCH_ENDPOINT, AROYO_BENCH_BUCKET, AWS_ACCESS_KEY_ID,
+Environment: ARROYO_BENCH_ENDPOINT, ARROYO_BENCH_BUCKET, AWS_ACCESS_KEY_ID,
 AWS_SECRET_ACCESS_KEY, AWS_REGION (default us-east-1). The payload is a mix of
 int64, float64 and string columns. Every number is printed with the machine and
 the endpoint so results can be compared.
@@ -21,7 +21,7 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-import aroyo
+import arroyo
 
 MIB = 1024 * 1024
 
@@ -57,15 +57,15 @@ def timed(name: str, payload_bytes: int, run: Callable[[], None]) -> Result:
     return Result(name, time.perf_counter() - start, payload_bytes)
 
 
-def aroyo_write(config: aroyo.S3Config, path: str, table: pa.Table, batch_rows: int, part_size: int) -> None:
-    writer = aroyo.ParquetStreamWriter(config, path, table.schema, part_size=part_size)
+def arroyo_write(config: arroyo.S3Config, path: str, table: pa.Table, batch_rows: int, part_size: int) -> None:
+    writer = arroyo.ParquetStreamWriter(config, path, table.schema, part_size=part_size)
     for batch in table.to_batches(max_chunksize=batch_rows):
         writer.write(batch)
     writer.close().commit()
 
 
-def aroyo_read(config: aroyo.S3Config, path: str, concurrency: int) -> int:
-    reader = pa.RecordBatchReader.from_stream(aroyo.read_parquet(config, path, concurrency=concurrency))
+def arroyo_read(config: arroyo.S3Config, path: str, concurrency: int) -> int:
+    reader = pa.RecordBatchReader.from_stream(arroyo.read_parquet(config, path, concurrency=concurrency))
     return sum(batch.num_rows for batch in reader)
 
 
@@ -137,22 +137,22 @@ def main() -> None:
     parser.add_argument("--json", type=Path, default=None, help="also write the results to this file")
     args = parser.parse_args()
 
-    endpoint = os.environ["AROYO_BENCH_ENDPOINT"]
-    bucket = os.environ["AROYO_BENCH_BUCKET"]
-    config = aroyo.S3Config.from_env(endpoint=endpoint, bucket=bucket, allow_http=endpoint.startswith("http://"))
+    endpoint = os.environ["ARROYO_BENCH_ENDPOINT"]
+    bucket = os.environ["ARROYO_BENCH_BUCKET"]
+    config = arroyo.S3Config.from_env(endpoint=endpoint, bucket=bucket, allow_http=endpoint.startswith("http://"))
     table = payload(args.rows, seed=7)
     payload_bytes = table.nbytes
     run_id = uuid.uuid4().hex[:8]
 
     print(f"machine: {platform.platform()} cpus={os.cpu_count()} python={platform.python_version()}")
     print(f"endpoint: {endpoint} bucket={bucket}")
-    print(f"payload: {args.rows} rows, {payload_bytes / MIB:.0f} MiB of Arrow data, pyarrow {pa.__version__}, aroyo {aroyo.__version__}")
+    print(f"payload: {args.rows} rows, {payload_bytes / MIB:.0f} MiB of Arrow data, pyarrow {pa.__version__}, arroyo {arroyo.__version__}")
 
     results: list[Result] = []
     for _ in range(args.repeat):
-        key = f"bench/{run_id}/aroyo.parquet"
-        results.append(timed("aroyo write", payload_bytes, lambda: aroyo_write(config, key, table, args.batch_rows, args.part_size)))
-        results.append(timed(f"aroyo read (concurrency={args.concurrency})", payload_bytes, lambda: aroyo_read(config, key, args.concurrency)))
+        key = f"bench/{run_id}/arroyo.parquet"
+        results.append(timed("arroyo write", payload_bytes, lambda: arroyo_write(config, key, table, args.batch_rows, args.part_size)))
+        results.append(timed(f"arroyo read (concurrency={args.concurrency})", payload_bytes, lambda: arroyo_read(config, key, args.concurrency)))
 
         try:
             filesystem = pyarrow_fs(endpoint)
@@ -191,7 +191,7 @@ def main() -> None:
         "cpus": os.cpu_count(),
         "python": platform.python_version(),
         "pyarrow": pa.__version__,
-        "aroyo": aroyo.__version__,
+        "arroyo": arroyo.__version__,
         "rows": args.rows,
         "payload_bytes": payload_bytes,
         "results": [asdict(result) | {"mib_per_second": result.mib_per_second} for result in results],

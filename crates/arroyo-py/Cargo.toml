@@ -1,6 +1,6 @@
 [package]
-name = "aroyo-py"
-description = "Python bindings for aroyo (extension module aroyo._aroyo)"
+name = "arroyo-py"
+description = "Python bindings for arroyo (extension module arroyo._arroyo)"
 publish = false
 version.workspace = true
 edition.workspace = true
@@ -8,11 +8,11 @@ license.workspace = true
 repository.workspace = true
 
 [lib]
-name = "_aroyo"
+name = "_arroyo"
 crate-type = ["cdylib"]
 
 [dependencies]
-aroyo-core = { workspace = true }
+arroyo-core = { workspace = true }
 arrow-array = { workspace = true }
 arrow-schema = { workspace = true }
 object_store = { workspace = true }

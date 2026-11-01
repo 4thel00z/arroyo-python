@@ -13,7 +13,7 @@ class ArrowArrayStream(Protocol):
 class ArrowArray(Protocol):
     def __arrow_c_array__(self, requested_schema: object | None = None) -> tuple[object, object]: ...
 
-class AroyoError(Exception):
+class ArroyoError(Exception):
     """Raised for any storage, Parquet or checkpoint-state error."""
 
 class S3Config:

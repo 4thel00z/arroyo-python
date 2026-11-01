@@ -3,7 +3,7 @@ requires = ["maturin>=1.7,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "aroyo"
+name = "arroyo-python"
 version = "0.1.0"
 description = "Crash-resumable Parquet multipart uploads to S3-compatible storage, and parallel reads back"
 readme = "README.md"
@@ -24,13 +24,13 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/4thel00z/aroyo-python"
-Issues = "https://github.com/4thel00z/aroyo-python/issues"
+Repository = "https://github.com/4thel00z/arroyo-python"
+Issues = "https://github.com/4thel00z/arroyo-python/issues"
 
 [tool.maturin]
 python-source = "python"
-module-name = "aroyo._aroyo"
-manifest-path = "crates/aroyo-py/Cargo.toml"
+module-name = "arroyo._arroyo"
+manifest-path = "crates/arroyo-py/Cargo.toml"
 features = ["pyo3/extension-module"]
 include = [
     { path = "LICENSE-MIT", format = "sdist" },

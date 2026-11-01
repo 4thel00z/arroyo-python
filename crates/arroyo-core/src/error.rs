@@ -1,6 +1,6 @@
-//! The error type shared by every aroyo-core operation.
+//! The error type shared by every arroyo-core operation.
 
-/// Every failure aroyo-core reports.
+/// Every failure arroyo-core reports.
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("object store: {0}")]
