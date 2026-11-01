@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "arroyo-python"
-version = "0.1.0"
+version = "0.1.2"
 description = "Crash-resumable Parquet multipart uploads to S3-compatible storage, and parallel reads back"
 readme = "README.md"
 requires-python = ">=3.12"

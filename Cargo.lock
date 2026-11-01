@@ -159,7 +159,7 @@ dependencies = [
 
 [[package]]
 name = "arroyo-core"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "arrow-array",
  "arrow-schema",
@@ -179,7 +179,7 @@ dependencies = [
 
 [[package]]
 name = "arroyo-py"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "arrow-array",
  "arrow-schema",
